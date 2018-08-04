@@ -8,6 +8,8 @@ import { logger }     from './TSCommon/logger';
 
 const app = express();
 app.use(express.json());
+app.set('view engine', 'pug');
+
 admin.initializeApp();
 
 // MIDDLEWARE
@@ -15,9 +17,10 @@ app.use(cors({ origin: true }));
 
 // HANDLERS
 app.post('/webhook', async (request, response, next) => {
-  const source = Source.parseSourceFromUrl(new URL(request.url));
+  const source = Source.parseSourceFromUrl(new URL(`${request.protocol}://${request.hostname}`));
   try {
-    await source.handleWebhook(request);
+    const result = await source.handleWebhook(request);
+    response.status(200).send(result);
   } catch (error) {
     next(error);
   }
@@ -26,10 +29,15 @@ app.post('/webhook', async (request, response, next) => {
 app.post('/install', async (request, response, next) => {
   const source = Source.parseSourceFromUrl(new URL(request.url));
   try {
-    await source.installWebhook(request);
+    const result = await source.installWebhook(request);
+    response.status(200).send(result);
   } catch (error) {
     next(error);
   }
+});
+
+app.get('/install', (request, response, next) => {
+  response.render('install');
 });
 
 app.use((err, req, res, next) => {

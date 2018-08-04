@@ -3,7 +3,7 @@ import * as crypto from 'crypto';
 export class Crypto {
   private static sign(data, secret) {
     return `sha1=${crypto.createHmac('sha1', secret)
-      .update(data)
+      .update(Buffer.from(JSON.stringify(data)))
       .digest('hex')}`;
   }
 

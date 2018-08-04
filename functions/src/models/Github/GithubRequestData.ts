@@ -1,17 +1,15 @@
 import { Request }     from 'express';
 import { GithubEvent } from './GithubEvent';
-import { RequestData } from './RequestData';
+import { RequestData } from '../RequestData';
 
 export class GithubRequestData implements RequestData {
   signature: string;
   event: GithubEvent;
-  id: string;
   data: any;
 
-  constructor(signature: string, event: GithubEvent, id: string, data: any) {
+  constructor(signature: string, event: GithubEvent, data: any) {
     this.signature = signature;
     this.event     = event;
-    this.id        = id;
     this.data      = data;
   }
 
@@ -31,12 +29,8 @@ export class GithubRequestData implements RequestData {
     if (!event) {
       throw new Error('Event not provided');
     }
-    const id = request.headers['x-github-id'];
-    if (!id) {
-      throw new Error('ID not provided');
-    }
     return new GithubRequestData(signature.toString(),
                                  GithubRequestData.parseGithubEvent(event.toString()),
-                                 id.toString(), request.body);
+                                 request.body);
   }
 }

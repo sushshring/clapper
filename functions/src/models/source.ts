@@ -1,6 +1,7 @@
 import { Request }                                       from 'express';
 import { URL }                                           from 'url';
 import { DefaultHandler, GithubHandler, WebhookHandler } from '../handlers/handlers';
+import { logger }                                        from '../TSCommon/logger';
 import { Sources }                                       from './sources';
 
 export class Source {
@@ -10,6 +11,8 @@ export class Source {
   public static parseSourceFromUrl(url: URL): Source {
     switch (url.hostname) {
       case 'github.com':
+      case 'smee.io':
+      case 'localhost:5000':
         return new Source(Sources.GITHUB);
       default:
         return new Source();
