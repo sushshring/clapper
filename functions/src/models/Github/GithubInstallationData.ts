@@ -1,4 +1,5 @@
 import { Request }     from 'express';
+import { HttpsError }  from 'firebase-functions/lib/providers/https';
 import { GithubEvent } from './GithubEvent';
 import { RequestData } from '../RequestData';
 
@@ -25,11 +26,14 @@ export class GithubInstallationData implements RequestData {
   public static parseFromHttp(request: Request) {
     const signature = request.headers['x-hub-signature'];
     if (!signature) {
-      throw new Error('Signature not provided');
+      throw new HttpError('Signature not provided', 401);
     }
     const event = request.headers['x-github-event'];
     if (!event) {
-      throw new Error('Event not provided');
+      throw new HttpError('Event not provided', 401);
+    }
+    if (!request.body.installationId) {
+      throw new HttpError('Installation ID for hardware must be provided', 401);
     }
     return new GithubInstallationData(signature.toString(),
                                       GithubInstallationData.parseGithubEvent(event.toString()),

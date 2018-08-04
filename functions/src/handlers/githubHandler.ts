@@ -1,5 +1,6 @@
 import { Request }                from 'express';
 import { GithubInstallationData } from '../models/Github/GithubInstallationData';
+import { Installation }           from '../models/Installation';
 import { Crypto }                 from '../TSCommon/Crypto';
 import { GithubRequestData }      from '../models/Github/GithubRequestData';
 import TsCommonEnv                from '../TSCommon/TsCommonEnv';
@@ -25,14 +26,14 @@ export class GithubHandler implements WebhookHandler {
     return this.innerInstall(GithubInstallationData.parseFromHttp(request));
   }
 
-  private innerInstall(request: GithubRequestData) {
+  private innerInstall(request: GithubInstallationData) {
     if (!Crypto.verify(request.signature,
                        request.data,
                        TsCommonEnv.GITHUB_WEBHOOK_SECRET)) {
       return Promise.reject('Could not verify incoming webhook');
     }
     // Handle Github Installation.
-
-    return Promise.resolve();
+    return new Installation(request.data.installation.id, request.installationHWID)
+      .save();
   }
 }
