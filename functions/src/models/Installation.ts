@@ -1,23 +1,45 @@
-import { FirestoreModel } from '../database/FirestoreModel';
+import * as admin        from 'firebase-admin';
+import { DatabaseModel } from '../database/DatabaseModel';
+import DataSnapshot = admin.database.DataSnapshot;
 
-export class Installation extends FirestoreModel {
-  protected collection: string;
-  protected ref: string;
+/**
+ * Represents a "state machine" for the installation.
+ * NONE -> Default. No installation exists.
+ * ACCOUNT_CONNECTED -> An installation was started for a
+ *                    some provider, but no hardware connected yet.
+ * HARDWARE_CONNECTED -> Hardware is successfully connected and
+ *                      installation is ready to go.
+ */
+export enum InstallationState {
+  NONE,
+  ACCOUNT_CONNECTED,
+  HARDWARE_CONNECTED,
+}
 
-  uid: string;
-  mqttRef: string;
+export class Installation implements DatabaseModel {
+  public collection: string;
+  public ref: string;
+  public state: InstallationState;
+  public uid: string;
+  public mqttRef: string;
 
-  constructor(uid: string, mqttRef: string) {
-    super();
+  constructor(uid: string, mqttRef?: string, state: InstallationState = InstallationState.NONE) {
     this.collection = 'installations';
     this.uid        = uid;
     this.ref        = uid;
     this.mqttRef    = mqttRef;
+    this.state      = state;
   }
 
-  get marshall() {
+  marshall() {
     return {
-      mqttRef: this.mqttRef
+      mqttRef: this.mqttRef,
+      state: this.state.toString(),
     };
+  }
+
+  unmarshall(data: DataSnapshot) {
+    const value = data.val();
+    return new Installation(data.key, value.mqttRef, value.state);
   }
 }

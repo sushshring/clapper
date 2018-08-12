@@ -1,4 +1,6 @@
 export { Sources }           from './sources';
 export { Source }            from './source';
-export { RequestData }       from './RequestData';
 export { GithubRequestData } from './Github/GithubRequestData';
+export { InstallationStream } from './InstallationStream';
+export { Installation, InstallationState }       from './Installation';
+export { HWInstallationData } from './Github/HWInstallationData';

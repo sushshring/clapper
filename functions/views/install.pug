@@ -1,3 +1,6 @@
-html
-    head
-    body
+body
+    h1= "Install clapper!"
+    form(action="/clap-clap-f8d6e/us-central1/clapper/install" method="POST")
+        p Clapper serial number:
+            input(type="text" name="installationId" placeholder="Serial number")
+        input(type="submit")

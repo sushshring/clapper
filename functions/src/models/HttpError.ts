@@ -1,11 +1,8 @@
-interface HttpError extends Error {
+export class HttpError extends Error {
   status?: number;
-}
 
-interface HttpErrorConstructor {
-  new(message?: string, status?: number): HttpError;
-  (message?: string, status?: number): HttpError;
-  readonly prototype: HttpError;
+  constructor(message: string, status: number) {
+    super(message);
+    this.status = status;
+  }
 }
-
-declare const HttpError: HttpErrorConstructor;

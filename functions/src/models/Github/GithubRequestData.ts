@@ -1,8 +1,8 @@
 import { Request }     from 'express';
+import { HttpError }   from '../HttpError';
 import { GithubEvent } from './GithubEvent';
-import { RequestData } from '../RequestData';
 
-export class GithubRequestData implements RequestData {
+export class GithubRequestData {
   signature: string;
   event: GithubEvent;
   data: any;
@@ -15,6 +15,7 @@ export class GithubRequestData implements RequestData {
 
   private static parseGithubEvent(event: string): GithubEvent {
     switch (event) {
+      // TODO: Add proper parsing for all Github events.
       default:
         return GithubEvent.PULL_REQUEST;
     }

@@ -5,6 +5,8 @@
     "noImplicitReturns": true,
     "outDir": "lib",
     "sourceMap": true,
+    "experimentalDecorators": true,
+    "types": ["reflect-metadata"],
     "target": "es6"
   },
   "compileOnSave": true,

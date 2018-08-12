@@ -1,12 +1,13 @@
-import { Request }           from 'express';
-import { WebhookHandler }    from './handlers';
+import { Request }        from 'express';
+import { Observable }     from 'rxjs';
+import { WebhookHandler } from './handlers';
 
 export class DefaultHandler implements WebhookHandler {
-  handle(request: Request): Promise<any> {
+  handle(request: Request): Observable<any> {
     throw new Error('Default handler is unsupported.');
   }
 
-  install(request: Request): Promise<any> {
+  install(request: Request): Observable<any> {
     throw new Error('Default handler is unsupported.');
   }
 }
