@@ -7,6 +7,8 @@ export class InstallationStream implements DatabaseModel {
 
   constructor(installationHWID: string) {
     this.installationHWID = installationHWID;
+    this.ref = installationHWID;
+    this.collection = 'installations';
   }
 
   collection: string;
@@ -14,7 +16,8 @@ export class InstallationStream implements DatabaseModel {
 
   marshall() {
     return {
-      installationHWID: this.installationHWID,
+      hwId: this.installationHWID,
+      updated: new Date().getTime(),
     };
   }
 

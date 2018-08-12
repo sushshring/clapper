@@ -1,6 +1,7 @@
 {
   "name": "functions",
   "scripts": {
+    "preinstall": "npm install -g firebase-tools",
     "lint": "tslint --project tsconfig.json",
     "build": "tsc -w &",
     "serve": "npm run build && $(firebase serve --only functions | ./node_modules/.bin/bunyan)",
@@ -20,6 +21,7 @@
     "firebase-functions": "^2.0.0",
     "inversify": "4.13.0",
     "pug": "2.0.3",
+    "reflect-metadata": "0.1.12",
     "rxjs": "6.2.2",
     "tslint-config-airbnb": "5.9.2"
   },

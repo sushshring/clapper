@@ -14,7 +14,7 @@ app.use((req, res, next) => {
     res.removeListener('close', afterResponse);
     const log = loggerInstance.child({
       id: req.ip,
-    }, true);
+    },                               true);
     log.info({ res }, 'response');
   }
 
@@ -26,8 +26,8 @@ app.use((req, res, next) => {
   const log = loggerInstance.child({
     id  : req.ip,
     body: req.body,
-  }, true);
-  log.info({ req });
+  },                               true);
+  // log.info({ req });
   next();
 });
 app.set('view engine', 'pug');

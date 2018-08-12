@@ -1,16 +1,19 @@
 import { Request }     from 'express';
 import { HttpError }   from '../HttpError';
+import { RequestData } from '../RequestData';
 import { GithubEvent } from './GithubEvent';
 
-export class GithubRequestData {
+export class GithubRequestData extends RequestData {
   signature: string;
   event: GithubEvent;
-  data: any;
+  installationId: string;
 
   constructor(signature: string, event: GithubEvent, data: any) {
-    this.signature = signature;
-    this.event     = event;
-    this.data      = data;
+    super();
+    this.signature      = signature;
+    this.event          = event;
+    this.installationId = data.installation.id;
+    this.data           = data;
   }
 
   private static parseGithubEvent(event: string): GithubEvent {

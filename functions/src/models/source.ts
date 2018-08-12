@@ -3,8 +3,7 @@ import { take }                                                 from 'rxjs/opera
 import { URL }                                                  from 'url';
 import { GithubHandler, WebhookHandler, HWInstallationHandler } from '../handlers/handlers';
 import { SERVICE_IDENTIFIER }                                   from '../TSCommon/Constants';
-import Installer                                                from '../TSCommon/Installer';
-import { logger }                                               from '../TSCommon/logger';
+import Installer                                                from '../TSCommon/inversify.config';
 import { Sources }                                              from './sources';
 
 export class Source {
@@ -12,16 +11,15 @@ export class Source {
   private readonly handler: WebhookHandler;
 
   public static parseSourceFromUrl(url: URL): Source {
-    logger.warn(url);
     switch (url.origin) {
       case 'github.com':
       case 'smee.io':
+      default:
         return new Source(Sources.GITHUB);
       case 'http://localhost:5000':
       case 'https://firebase-functions.com': // TODO: Change to actual source.
         return new Source(Sources.HWINSTALLER);
-      default:
-        return new Source();
+        // return new Source();
     }
   }
 
@@ -34,7 +32,8 @@ export class Source {
                                          Installer.get(SERVICE_IDENTIFIER.OrchestrationService));
         break;
       case Sources.HWINSTALLER:
-        this.handler = new HWInstallationHandler(Installer.get(SERVICE_IDENTIFIER.HWService));
+        this.handler = new HWInstallationHandler(Installer.get(SERVICE_IDENTIFIER.HWService),
+                                                 Installer.get(SERVICE_IDENTIFIER.DatabaseService));
         break;
       // default:
       //   this.handler = new DefaultHandler();

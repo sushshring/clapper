@@ -1,5 +1,5 @@
 export const SERVICE_IDENTIFIER = {
-  DatabaseService: Symbol('FirestoreService'),
-  HWService: Symbol('HWService'),
-  OrchestrationService: Symbol('EventOrchestrationService'),
+  DatabaseService: Symbol.for('FirestoreService'),
+  HWService: Symbol.for('HWService'),
+  OrchestrationService: Symbol.for('EventOrchestrationService'),
 };

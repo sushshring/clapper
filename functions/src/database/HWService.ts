@@ -34,10 +34,10 @@ export class HWService implements DatabaseService {
         this.rtDatabase.ref(data.collection)
           .child(data.ref)
           .push()
-          .set(data.marshall) :
+          .set(data.marshall()) :
         this.rtDatabase.ref(data.collection)
           .child(data.ref)
-          .set(data.marshall),
-    );
+          .set(data.marshall()),
+          );
   }
 }

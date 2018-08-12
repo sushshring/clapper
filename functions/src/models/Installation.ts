@@ -38,8 +38,10 @@ export class Installation implements DatabaseModel {
     };
   }
 
-  unmarshall(data: DataSnapshot) {
-    const value = data.val();
-    return new Installation(data.key, value.mqttRef, value.state);
+  unmarshall(data: any) {
+    const value = data.data();
+    this.mqttRef = value.mqttRef;
+    this.state = value.state;
+    return this;
   }
 }

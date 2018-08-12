@@ -1,17 +1,20 @@
+import 'reflect-metadata';
 import { Request }                   from 'express';
 import { inject }                    from 'inversify';
 import { Observable, throwError }    from 'rxjs';
 import { map, switchMap, take }      from 'rxjs/operators';
 import { DatabaseService }           from '../database/DatabaseService';
-import { HttpError }                 from '../models/HttpError';
 import {
   Installation,
   InstallationState,
   GithubRequestData,
+  HttpError,
+  ClapperEvent,
 }                                    from '../models/models';
 import { EventOrchestrationService } from '../services/EventOrchestrationService';
 import { SERVICE_IDENTIFIER }        from '../TSCommon/Constants';
 import { Crypto }                    from '../TSCommon/Crypto';
+import { logger }                    from '../TSCommon/logger';
 import TsCommonEnv                   from '../TSCommon/TsCommonEnv';
 import { WebhookHandler }            from './handlers';
 
@@ -33,13 +36,14 @@ export class GithubHandler implements WebhookHandler {
       return throwError('Could not verify incoming webhook');
     }
     // Handle Github event.
-    const installation = new Installation(request.data.installationId);
+    const installation = new Installation(request.installationId);
     return this.databaseService.get(installation.collection, installation.ref)
       .pipe(
         take(1),
         map(dataSnapshot => installation.unmarshall(dataSnapshot)),
+        // Check that installation has a valid state
         map((installation: Installation) => {
-          switch (installation.state) {
+          switch (+installation.state) {
             case InstallationState.HARDWARE_CONNECTED:
               return installation;
             default:
@@ -47,12 +51,18 @@ export class GithubHandler implements WebhookHandler {
               throw new HttpError('No hardware found', 401);
           }
         }),
-        switchMap(this.eventOrchestrationService.handleEvent),
+        switchMap(installation => this.eventOrchestrationService.handleEvent(
+          GithubHandler.generateEvent(installation, request))),
       );
   }
 
   install(request: Request): Observable<any> {
     return this.innerInstall(GithubRequestData.parseFromHttp(request));
+  }
+
+  private static generateEvent(installation: Installation,
+                               request: GithubRequestData): ClapperEvent {
+    return ClapperEvent.from(installation, request);
   }
 
   private innerInstall(request: GithubRequestData) {
